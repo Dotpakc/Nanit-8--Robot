@@ -1,6 +1,9 @@
 #include <Arduino.h>
 
 
+#ifndef MOTOR_H
+#define MOTOR_H
+
 class Motor {
     public:
         Motor(int pin1, int pin2);
@@ -10,7 +13,9 @@ class Motor {
     private:
         int _pin1;
         int _pin2;
-}
+};
+
+#endif // MOTOR_H
 
 
 
