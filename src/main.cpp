@@ -1,11 +1,18 @@
 #include <Arduino.h>
 #include <NanitLib.h>
+#include <Servo.h>
 
-#include "Motor.h"
+#define PIR_PIN P9_3
 
 
-Motor m1(MOTOR1_A, MOTOR1_B);
-Motor m2(MOTOR2_A, MOTOR2_B);
+Servo servo;
+
+
+bool pir_state = false;
+
+void pir_isr() {
+  pir_state = true;
+}
 
 
 
@@ -13,23 +20,19 @@ void setup() {
   Serial.begin(9600);
   Nanit_Base_Start();
 
-  pinMode(MOTOR_ENABLE, OUTPUT);
- 
+  servo.attach(P9_4);
+  servo.write(0);
 
-  digitalWrite(MOTOR_ENABLE, HIGH);
+  attachInterrupt(digitalPinToInterrupt(PIR_PIN), pir_isr, RISING);
+
 }
 
 void loop() {
-  m1.forward(255);
-  m2.forward(255);
-  delay(1000);
-  m1.stop();
-  m2.stop();
-  delay(1000);
-  m1.backward(255);
-  m2.backward(255);
-  delay(1000);
-  m1.stop();
-  m2.stop();
-  delay(1000);
+  if (pir_state) {
+    Serial.println("Motion detected");
+    servo.write(180);
+    delay(1000);
+    servo.write(0);
+    pir_state = false;
+  }
 }
