@@ -3,17 +3,9 @@
 #include <Servo.h>
 
 #define PIR_PIN P9_3
-
+#define LDR_PIN P4_1
 
 Servo servo;
-
-
-bool pir_state = false;
-
-void pir_isr() {
-  pir_state = true;
-}
-
 
 
 void setup() {
@@ -23,16 +15,15 @@ void setup() {
   servo.attach(P9_4);
   servo.write(0);
 
-  attachInterrupt(digitalPinToInterrupt(PIR_PIN), pir_isr, RISING);
-
 }
 
+
+
 void loop() {
-  if (pir_state) {
+  if (digitalRead(PIR_PIN) && digitalRead(LDR_PIN)) {
     Serial.println("Motion detected");
     servo.write(180);
     delay(1000);
     servo.write(0);
-    pir_state = false;
   }
 }
